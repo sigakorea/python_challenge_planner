@@ -10,7 +10,7 @@
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="스터디캐나다">
 <meta property="og:title" content="캐나다 학년 계산기 | 우리 아이는 캐나다에서 몇 학년일까?">
-<meta property="og:description" content="출생연도 → 입국 시기 → 주(州), 세 번만 고르면 캐나다 예상 학년과 한국 학년 비교가 끝납니다. 10개 주 학제·2월 중도 입학까지 반영.">
+<meta property="og:description" content="출생연도 → 입국 연도 → 주(州), 세 번만 고르면 캐나다 예상 학년과 한국 학년 비교가 끝납니다. 10개 주 학제·중도 입학까지 반영.">
 <meta property="og:url" content="https://sigakorea.github.io/python_challenge_planner/">
 <meta property="og:locale" content="ko_KR">
 <meta property="og:image" content="https://sigakorea.github.io/python_challenge_planner/og-image.png">
@@ -112,11 +112,13 @@
   .foot-nav{display:flex; align-items:center; justify-content:space-between; gap:12px; margin-top:22px}
   .back{appearance:none; border:0; background:none; font:inherit; font-size:13.5px; font-weight:700; color:var(--muted); cursor:pointer; padding:8px 0; display:inline-flex; align-items:center; gap:6px}
   .back:hover{color:var(--charcoal)}
-  .next{appearance:none; border:0; font:inherit; font-size:15px; font-weight:800; color:#fff; background:var(--red); border-radius:12px; padding:13px 22px; cursor:pointer; transition:background .16s, transform .1s}
-  .next:hover{background:var(--red-dark)}
-  .next:active{transform:scale(.98)}
-  .next:disabled{background:#D7DAE0; cursor:not-allowed; color:#fff}
-  .next:focus-visible{outline:3px solid rgba(200,16,46,.28); outline-offset:2px}
+
+  /* step 2 : one-tap year grid */
+  .entryyears{grid-template-columns:repeat(3,1fr)}
+  .statement{background:var(--soft); border:1px solid var(--line); border-radius:14px; padding:14px 15px; margin:0 0 14px}
+  .statement p{margin:0; font-size:14px; line-height:1.62; color:var(--ink); letter-spacing:-0.015em}
+  .statement p + p{margin-top:6px}
+  .statement b{color:var(--red-dark); font-weight:900}
 
   /* result */
   .res-head{display:flex; align-items:flex-start; justify-content:space-between; gap:10px; margin-bottom:16px}
@@ -125,7 +127,8 @@
   .chip{font-size:11.5px; font-weight:800; color:var(--red-dark); background:var(--red-soft); border:1px solid var(--red-line); border-radius:20px; padding:4px 10px; white-space:nowrap}
   .grades{display:grid; grid-template-columns:1fr 1fr; gap:10px}
   .g{border-radius:16px; padding:16px 15px; border:1px solid var(--line); min-height:120px; display:flex; flex-direction:column; justify-content:center}
-  .g .cap{font-size:11px; font-weight:800; letter-spacing:.08em; opacity:.8}
+  .g .cap{font-size:11px; font-weight:800; letter-spacing:.08em}
+  .g .cap b{font-weight:900; letter-spacing:-0.01em; font-size:12px}
   .g .big{font-size:26px; font-weight:900; letter-spacing:-0.04em; line-height:1.15; margin:7px 0 3px; word-break:keep-all}
   .g .sm{font-size:12px; line-height:1.45; opacity:.85}
   .g.ca{background:linear-gradient(155deg,#C8102E 0%,#9A0C22 100%); border:0; color:#fff; box-shadow:0 8px 22px rgba(200,16,46,.22)}
@@ -192,6 +195,7 @@
     .card{padding:28px 26px 24px}
     .q{font-size:23px}
     .years{grid-template-columns:repeat(7,1fr)}
+    .entryyears{grid-template-columns:repeat(6,1fr)}
     .provs{grid-template-columns:repeat(3,1fr)}
     .g .big{font-size:32px}
     .hero{padding:44px 0 8px}
@@ -220,7 +224,7 @@
   <section class="hero">
     <div class="eyebrow">Canada Grade Calculator</div>
     <h1>우리 아이는 캐나다에서<br><em>몇 학년</em>이 될까요?</h1>
-    <p class="lede">출생연도 · 입국 시기 · 주(州) — 세 가지만 고르면 끝납니다. 10개 주 학제와 2월 중도 입학까지 반영했습니다.</p>
+    <p class="lede">출생연도 · 입국 연도 · 주(州) — 세 번만 고르면 끝납니다. 10개 주 학제와 중도 입학까지 반영했습니다.</p>
   </section>
 
   <!-- STEP 1 -->
@@ -245,35 +249,21 @@
     <div class="step" id="step2" data-step="2">
       <div class="card">
         <div class="step-no">STEP 2</div>
-        <h2 class="q">캐나다에 언제 들어가시나요?</h2>
-        <p class="q-sub">입국 연도와 입학 시기를 함께 골라 주세요.</p>
+        <h2 class="q">캐나다 입국 예정 년도는 언제인가요?</h2>
+        <p class="q-sub">연도를 한 번만 누르면 바로 다음 단계로 넘어갑니다.</p>
 
-        <div class="block">
-          <span class="field-label">입국 예정 연도</span>
-          <div class="grid years" id="entryGrid" role="group" aria-label="입국 예정 연도"></div>
-          <p class="hint" style="margin-bottom:0">2030년 이후는 아래에서 선택하세요</p>
-          <select class="select" id="entryOther" style="margin-top:8px">
-            <option value="">연도 선택</option>
+        <div class="grid entryyears" id="entryYearGrid" role="group" aria-label="입국 예정 연도"></div>
+
+        <div class="block" style="margin-top:16px">
+          <label class="field-label" for="entryYearOther">목록에 없는 연도</label>
+          <select class="select" id="entryYearOther">
+            <option value="">연도 직접 선택</option>
           </select>
-        </div>
-
-        <div class="block">
-          <span class="field-label">입학 시기</span>
-          <div class="two">
-            <button class="choice" type="button" data-term="sep" aria-pressed="false">
-              <b>9월 정규 학기</b>
-              <small>캐나다 학년도 시작(9월)에 맞춰 입학</small>
-            </button>
-            <button class="choice" type="button" data-term="feb" aria-pressed="false">
-              <b>2월 신학기·중도</b>
-              <small>전년 9월에 시작한 학년도에 편입</small>
-            </button>
-          </div>
+          <p class="hint" style="margin:8px 0 0">선택하면 바로 다음 단계로 넘어갑니다.</p>
         </div>
 
         <div class="foot-nav">
           <button class="back" type="button" data-back="1">← 이전</button>
-          <button class="next" type="button" id="next2" disabled>다음</button>
         </div>
       </div>
     </div>
@@ -294,26 +284,31 @@
     </div>
   </section>
 
-  <!-- STEP 4 -->
+  <!-- STEP 4 · 결과 -->
   <section class="stage">
     <div class="step" id="step4" data-step="4">
       <div class="card">
         <div class="res-head">
           <div>
-            <div class="step-no">STEP 4 · 결과</div>
+            <div class="step-no">결과</div>
             <h2 class="res-title" id="resTitle">예상 학년</h2>
           </div>
           <span class="chip" id="resChip">온타리오</span>
         </div>
 
+        <div class="statement" id="statement">
+          <p>우리 아이는 캐나다 <b>온타리오</b>에서 <b>2027년 9월</b>에 <b>초등학교 G7(7학년)</b>입니다.</p>
+          <p>우리 아이는 한국에서 <b>2027년 3월</b>에 <b>초등학교 6학년</b>입니다.</p>
+        </div>
+
         <div class="grades">
           <div class="g ca">
-            <div class="cap">캐나다에서는</div>
+            <div class="cap"><b id="caWhen">2027년 9월</b> 기준</div>
             <div class="big" id="caBig">G7</div>
             <div class="sm" id="caSm">초등학교</div>
           </div>
           <div class="g kr">
-            <div class="cap">같은 시기 한국은</div>
+            <div class="cap"><b id="krWhen">2027년 3월</b> 기준</div>
             <div class="big" id="krBig">초6</div>
             <div class="sm" id="krSm">초등학교</div>
           </div>
@@ -330,7 +325,7 @@
         </div>
 
         <button class="again" type="button" id="again">← 처음부터 다시 계산하기</button>
-        <p class="disclaimer">실제 학년 배정은 교육청·학교의 최종 판단과 이전 학업 기록에 따라 달라질 수 있습니다.</p>
+        <p class="disclaimer">※ 캐나다 9월 학기 시작 / 한국 3월 학기 시작 기준입니다. 1~6월 중도 입국 시에는 직전 9월 시작 학년도로 배정될 수 있습니다.</p>
       </div>
     </div>
   </section>
@@ -385,7 +380,7 @@
       <summary>학년 계산 기준과 주의사항</summary>
       <div class="body">
         <p>· 캐나다 학년도는 9월에 시작해 다음 해 6월에 끝납니다. 표의 학년은 입학하는 학년도(예: 2027–2028) 기준입니다.</p>
-        <p>· 9월 입학은 그 해 9월 시작 학년도, 2월 입학은 전년 9월 시작 학년도 기준으로 계산합니다.</p>
+        <p>· 9월 입학은 그 해 9월 시작 학년도, 1~6월 중도 입학은 전년 9월 시작 학년도 기준으로 계산합니다.</p>
         <p>· 한국 학년은 3월 시작 학년도 기준으로 같은 시기의 학년을 표시합니다.</p>
         <p>· 이 계산기는 만 나이 기준의 일반적인 배정을 안내합니다. 실제 배정은 교육청·학교가 이전 학업 기록과 영어 수준을 함께 보고 결정합니다.</p>
       </div>
@@ -420,7 +415,7 @@
     {"@type":"Question","name":"생일이 늦은데(10~12월생) 학년이 달라지나요?","acceptedAnswer":{"@type":"Answer","text":"온타리오·BC·앨버타 등 9개 주는 그 해 12월 31일까지 만 나이가 되면 그 학년으로 배정되므로 같은 해에 태어났다면 학년이 같습니다. 퀘벡만 9월 30일 기준이라 10~12월생은 한 학년 아래가 됩니다."}},
     {"@type":"Question","name":"2월에 입학하면 학년이 내려가나요?","acceptedAnswer":{"@type":"Answer","text":"2월 입학은 그 전 해 9월에 시작한 학년도에 편입하는 개념이라 학년은 유지됩니다. 학기 중 합류로 생기는 진도 차이는 학교 ESL·보충 지원으로 채웁니다."}},
     {"@type":"Question","name":"한국에서 한 학년을 마치고 가면 학년이 올라가나요?","acceptedAnswer":{"@type":"Answer","text":"유학생 학년 배정은 원칙적으로 만 나이 기준입니다. 한국 학업 기록이 좋아도 나이 기준 학년에서 크게 벗어나 배정되기 어렵고, 수학·과학은 상위 과목 수강으로 조정합니다."}},
-    {"@type":"Question","name":"캐나다 학년 계산은 어떻게 하나요?","acceptedAnswer":{"@type":"Answer","text":"입학하는 학년도의 연도에서 출생연도를 뺀 나이를 기준으로, 만 5세가 유치원, 만 6세가 G1이 됩니다. 2월 입학은 전년 9월 시작 학년도를 기준으로 계산합니다."}}
+    {"@type":"Question","name":"캐나다 학년 계산은 어떻게 하나요?","acceptedAnswer":{"@type":"Answer","text":"입학하는 학년도의 연도에서 출생연도를 뺀 나이를 기준으로, 만 5세가 유치원, 만 6세가 G1이 됩니다. 1~6월 중도 입학은 전년 9월 시작 학년도를 기준으로 계산합니다."}}
   ]
 }
 </script>
@@ -431,7 +426,7 @@
 
   /* ---------- data ---------- */
   var BIRTH_YEARS = [2022,2021,2020,2019,2018,2017,2016,2015,2014,2013,2012,2011,2010,2009];
-  var ENTRY_YEARS = [2026,2027,2028,2029];
+  var ENTRY_YEARS = [2026,2027,2028,2029,2030,2031];
 
   var PROV = {
     on:{name:"온타리오", en:"Ontario", tag:"인기", line:"JK·SK · G1–8 · G9–12",
@@ -517,7 +512,7 @@
   };
   var PROV_ORDER = ["on","bc","ab","qc","mb","sk","ns","nb","nl","pei"];
 
-  var state = {birth:null, entry:null, term:null, prov:null};
+  var state = {birth:null, entry:null, prov:null};
 
   /* ---------- helpers ---------- */
   function $(s, r){ return (r||document).querySelector(s); }
@@ -616,23 +611,22 @@
     if(BIRTH_YEARS.indexOf(y) === -1){ sel.value = String(y); } else { sel.value = ""; }
   }
 
-  function buildEntryGrid(){
-    var g = $("#entryGrid");
+  function buildEntryYearGrid(){
+    var g = $("#entryYearGrid");
     ENTRY_YEARS.forEach(function(y){
       var b = document.createElement("button");
-      b.type = "button"; b.className = "btn"; b.textContent = y;
+      b.type = "button"; b.className = "btn"; b.textContent = y + "년";
       b.setAttribute("aria-pressed","false");
       b.addEventListener("click", function(){
         state.entry = y;
-        $$("#entryGrid .btn").forEach(function(el){ el.setAttribute("aria-pressed","false"); });
-        b.setAttribute("aria-pressed","true");
-        $("#entryOther").value = "";
-        syncNext();
+        syncEntryUI();
+        setTimeout(function(){ show(3); }, 190);
       });
       g.appendChild(b);
     });
-    var sel = $("#entryOther");
-    for(var y = 2035; y >= 2030; y--){
+
+    var sel = $("#entryYearOther");
+    for(var y = 2032; y <= 2040; y++){
       var o = document.createElement("option");
       o.value = y; o.textContent = y + "년";
       sel.appendChild(o);
@@ -640,22 +634,15 @@
     sel.addEventListener("change", function(){
       if(!sel.value) return;
       state.entry = Number(sel.value);
-      $$("#entryGrid .btn").forEach(function(el){ el.setAttribute("aria-pressed","false"); });
-      syncNext();
-    });
-
-    $$("[data-term]").forEach(function(btn){
-      btn.addEventListener("click", function(){
-        state.term = btn.getAttribute("data-term");
-        $$("[data-term]").forEach(function(el){ el.setAttribute("aria-pressed","false"); });
-        btn.setAttribute("aria-pressed","true");
-        syncNext();
-      });
+      syncEntryUI();
+      setTimeout(function(){ show(3); }, 190);
     });
   }
 
-  function syncNext(){
-    $("#next2").disabled = !(state.entry && state.term);
+  function syncEntryUI(){
+    $$("#entryYearGrid .btn").forEach(function(el){
+      el.setAttribute("aria-pressed", el.textContent === state.entry + "년" ? "true" : "false");
+    });
   }
 
   function buildProvGrid(){
@@ -679,20 +666,51 @@
   }
 
   /* ---------- result ---------- */
+  function caPhrase(g){
+    var st = (g.stage || "").replace(/\s*\(.*\)\s*$/, "").trim();
+    var lab = g.label;
+    if(/^G\d+$/.test(lab)) lab = lab + "(" + lab.slice(1) + "학년)";
+    return (st ? st + " " : "") + lab;
+  }
+
+  function krPhrase(k){
+    if(k <= 6) return "만 " + k + "세 (취학 전)";
+    if(k <= 12) return "초등학교 " + (k - 6) + "학년";
+    if(k <= 15) return "중학교 " + (k - 12) + "학년";
+    if(k <= 18) return "고등학교 " + (k - 15) + "학년";
+    return "고교 졸업 이상";
+  }
+
   function render(){
-    if(!state.birth || !state.entry || !state.term || !state.prov) return;
-    var baseYear = state.term === "feb" ? state.entry - 1 : state.entry;
-    var n = (baseYear - state.birth) - 5;
-    var k = baseYear - state.birth;
+    if(!state.birth || !state.entry || !state.prov) return;
+    var k = state.entry - state.birth;
+    var n = k - 5;
     var p = PROV[state.prov];
     var ca = gradeInfo(state.prov, n);
     var kr = koreanInfo(k);
+    var caMonth = state.entry + "년 9월";
+    var krMonth = state.entry + "년 3월";
 
     $("#resChip").textContent = p.name;
+    $("#caWhen").textContent = caMonth;
+    $("#krWhen").textContent = krMonth;
     $("#caBig").textContent = ca.label;
     $("#caSm").textContent = ca.stage;
     $("#krBig").textContent = kr.label;
     $("#krSm").textContent = kr.stage;
+
+    var s1, s2;
+    if(n < 0){
+      s1 = "우리 아이는 캐나다 " + p.name + "에서 " + caMonth + " 기준 아직 유치원 입학 연령 전입니다.";
+    } else {
+      s1 = "우리 아이는 캐나다 " + p.name + "에서 <b>" + caMonth + "</b>에 <b>" + caPhrase(ca) + "</b>입니다.";
+    }
+    if(k <= 6){
+      s2 = "같은 시기 한국은 아직 취학 전(만 " + k + "세)입니다.";
+    } else {
+      s2 = "우리 아이는 한국에서 <b>" + krMonth + "</b>에 <b>" + krPhrase(k) + "</b>입니다.";
+    }
+    $("#statement").innerHTML = "<p>" + s1 + "</p><p>" + s2 + "</p>";
 
     var verdict = "";
     if(n < 0){
@@ -717,15 +735,12 @@
     }
     $("#verdict").innerHTML = verdict;
 
-    var termText = state.term === "sep"
-      ? state.entry + "년 9월 · " + state.entry + "–" + (state.entry+1) + "학년도 시작"
-      : state.entry + "년 2월 · " + baseYear + "–" + (baseYear+1) + "학년도 편입(전년 9월 시작)";
-
     var facts = [
-      ["입학 시기", termText],
+      ["캐나다 기준", caMonth + " · " + state.entry + "–" + (state.entry+1) + "학년도"],
+      ["한국 기준", krMonth + " · " + state.entry + "학년도"],
       ["선택한 주", p.name + " (" + p.en + ")"],
       ["출생연도", state.birth + "년생"],
-      ["입학 시 만 나이", "만 " + k + "세 기준"],
+      ["입학 시 만 나이", "만 " + k + "세"],
       ["입학 기준일", state.prov === "qc" ? "9월 30일 (퀘벡)" : "12월 31일"]
     ];
     $("#facts").innerHTML = facts.map(function(f){
@@ -736,9 +751,6 @@
     if(state.prov === "qc" && n >= 7 && n <= 11){
       tipsHtml += "<p>퀘벡은 Secondaire V(G11) 후 CEGEP 2년을 거쳐 대학에 진학합니다. 한국 고3과 같은 나이에 CEGEP 1년차가 됩니다.</p>";
     }
-    if(state.term === "feb"){
-      tipsHtml += "<p>2월 입학은 "+baseYear+"년 9월에 시작한 학년도에 합류하는 것이라 학년은 내려가지 않습니다. 학기 중 진도 차이는 학교 ESL·보충 수업으로 메웁니다.</p>";
-    }
     $("#tips").innerHTML = tipsHtml;
 
     document.title = state.birth + "년생 " + p.name + " " + ca.label + " · 캐나다 학년 계산기";
@@ -746,21 +758,19 @@
 
   /* ---------- init ---------- */
   buildYearGrid();
-  buildEntryGrid();
+  buildEntryYearGrid();
   buildProvGrid();
   setProgress(1);
 
-  $("#next2").addEventListener("click", function(){ show(3); });
   $$("[data-back]").forEach(function(b){
     b.addEventListener("click", function(){ show(Number(b.getAttribute("data-back"))); });
   });
   $("#again").addEventListener("click", function(){
-    state = {birth:null, entry:null, term:null, prov:null};
-    $$("#yearGrid .btn, #entryGrid .btn, [data-term], #provGrid .prov").forEach(function(el){
+    state = {birth:null, entry:null, prov:null};
+    $$("#yearGrid .btn, #entryYearGrid .btn, #provGrid .prov").forEach(function(el){
       el.setAttribute("aria-pressed","false");
     });
-    $("#birthOther").value = ""; $("#entryOther").value = "";
-    $("#next2").disabled = true;
+    $("#birthOther").value = ""; $("#entryYearOther").value = "";
     document.title = "캐나다 학년 계산기 | 생년·입국 시기로 우리 아이 캐나다 학년 바로 확인 – 스터디캐나다";
     show(1);
   });
