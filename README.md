@@ -4,7 +4,7 @@
 아이의 출생연도 → 캐나다 입국 시기(연도·학기) → 주(州)를 고르면,
 캐나다 예상 학년과 같은 시기 한국 학년을 나란히 보여 줍니다.
 
-- 라이브: https://sigakorea.github.io/canada-grade-calculator/
+- 라이브: https://sigakorea.github.io/python_challenge_planner/
 - 반영 범위: 10개 주(온타리오·BC·앨버타·퀘벡·매니토바·서스캐처원·노바스코샤·뉴브런즈윅·뉴펀들랜드 래브라도·PEI), 9월 정규 학기 / 2월 중도 입학
 - 상담 연결: 카카오톡 오픈채팅 · 무료 상담 신청(studycanada.net/contact)
 
