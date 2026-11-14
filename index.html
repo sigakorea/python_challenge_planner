@@ -547,13 +547,13 @@
     return {label:"고교 졸업 이상", stage:"대학·성인"};
   }
 
-  function stageTip(key, n){
+  function stageTip(n, stage){
+    var s = stage || "";
     if(n > 12) return "이미 고등학교 졸업 연령입니다. 유학 목적(대학 진학·어학·이민 준비)을 먼저 정하고 과정을 설계해야 합니다.";
     if(n < 0) return "아직 유치원 입학 연령 전입니다. 만 4세(JK·프리스쿨)부터 시작할 수 있어, 어학·생활 적응 기간을 넣어 계획하면 좋습니다.";
     if(n === 0) return "유치원은 놀이 중심이라 영어 적응 부담이 적습니다. 등록은 보통 1~2월에 시작하니 그 전에 서류를 준비하세요.";
-    if(n <= 6) return "유치원은 놀이 중심이라 영어 적응 부담이 적습니다. 등록은 보통 1~2월에 시작하니 그 전에 서류를 준비하세요.";
-    if(n <= 6) return "초등은 담임제라 한 교사가 하루를 함께 봅니다. 영어가 부족하면 입학과 함께 ESL 지원을 신청해 두는 것이 좋습니다.";
-    if(n <= 9) return "중학교부터 과목별 이동 수업과 선택과목이 시작됩니다. 수학 진도 차이를 입학 전에 확인해 두면 좋습니다.";
+    if(s.indexOf("초등") >= 0) return "초등은 담임제라 한 교사가 하루를 함께 봅니다. 영어가 부족하면 입학과 함께 ESL 지원을 신청해 두는 것이 좋습니다.";
+    if(s.indexOf("중") >= 0 || s.indexOf("Secondary") >= 0) return "중학교부터 과목별 이동 수업과 선택과목이 시작됩니다. 수학 진도 차이를 입학 전에 확인해 두면 좋습니다.";
     return "고등학교는 학점·졸업 요건이 있습니다. 11~12학년으로 입학하면 대학 입시 준비 기간이 짧아 미리 상담이 필요합니다.";
   }
 
@@ -725,7 +725,7 @@
       return '<div class="fact"><span class="k">'+f[0]+'</span><span class="v">'+f[1]+'</span></div>';
     }).join("");
 
-    var tipsHtml = '<span class="lab">실전 팁</span><p>'+p.name+' — '+p.tip+'</p><p>'+stageTip(state.prov, n)+'</p>';
+    var tipsHtml = '<span class="lab">실전 팁</span><p>'+p.name+' — '+p.tip+'</p><p>'+stageTip(n, ca.stage)+'</p>';
     if(state.prov === "qc" && n >= 7 && n <= 11){
       tipsHtml += "<p>퀘벡은 Secondaire V(G11) 후 CEGEP 2년을 거쳐 대학에 진학합니다. 한국 고3과 같은 나이에 CEGEP 1년차가 됩니다.</p>";
     }
